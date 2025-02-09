@@ -93,9 +93,9 @@ public class SwerveDrive extends SubsystemBase {
             double minThreshold = 0.1; // min robot input (account for friction resistance)
             double steepness = 1.8; // Power to raise the input to account for deadband
 
-            SmartDashboard.putNumber("Axiis/xInput", -yInput.getAsDouble());
-            SmartDashboard.putNumber("Axiis/yInput", -xInput.getAsDouble());
-            SmartDashboard.putNumber("Axiis/omegaInput", -omegaInput.getAsDouble());
+            SmartDashboard.putNumber("Axes/xInput", -yInput.getAsDouble());
+            SmartDashboard.putNumber("Axes/yInput", -xInput.getAsDouble());
+            SmartDashboard.putNumber("Axes/omegaInput", -omegaInput.getAsDouble());
 
             double vx = adjustAxisInput(-yInput.getAsDouble(), deadband, minThreshold, steepness);
             double vy = adjustAxisInput(-xInput.getAsDouble(), deadband, minThreshold, steepness);
