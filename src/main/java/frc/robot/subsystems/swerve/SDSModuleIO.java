@@ -27,6 +27,9 @@ public interface SDSModuleIO {
     /** Updates loggable inputs */
     public default void updateInputs(SDSModuleIOInputs inputs) {}
 
+    /** Updates loggable inputs */
+    public default void updateInputs(SDSModuleIOInputs inputs, Rotation2d turnPositionFallback) {} // TODO remove
+
     /** Set turn position setpoint */
     public default void setTurnPosition(Rotation2d position) {}
 

@@ -18,18 +18,23 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 
 public class SDSModuleIOSpark implements SDSModuleIO {
+    /* Motors */
     private SparkMax turnMotor;
     private SparkMax driveMotor;
 
+    /* Motor encoders */
     private SparkAbsoluteEncoder turnEncoder;
     private RelativeEncoder driveEncoder;
 
+    /* PID & Feedforward Controllers */
     private SparkClosedLoopController turnController;
     private SparkClosedLoopController driveController;
 
+    /* Set the offset (zero) position of the turn motor, usually used to account for encoder differences */
     private Rotation2d zeroRotation;
 
     public SDSModuleIOSpark(int module) {
+        /* Init motors based on module index */
         turnMotor = new SparkMax(
             switch(module) {
                 case 0 -> SwerveConstants.kFLTurnCANID;
@@ -42,10 +47,10 @@ public class SDSModuleIOSpark implements SDSModuleIO {
         );
         driveMotor = new SparkMax(
             switch(module) {
-                case 0 -> SwerveConstants.kFLTurnCANID;
-                case 1 -> SwerveConstants.kFRTurnCANID;
-                case 2 -> SwerveConstants.kBLTurnCANID;
-                case 3 -> SwerveConstants.kBRTurnCANID;
+                case 0 -> SwerveConstants.kFLDriveCANID;
+                case 1 -> SwerveConstants.kFRDriveCANID;
+                case 2 -> SwerveConstants.kBLDriveCANID;
+                case 3 -> SwerveConstants.kBRDriveCANID;
                 default -> 0;
             },
             MotorType.kBrushless
@@ -58,18 +63,22 @@ public class SDSModuleIOSpark implements SDSModuleIO {
             default -> new Rotation2d();
         };
 
-        SparkMaxConfig turnConfig = SwerveModuleConstants.turnConfig;
-        SparkMaxConfig driveConfig = SwerveModuleConstants.driveConfig;
-
-        turnMotor.setCANTimeout(0);
-        driveMotor.setCANTimeout(0);
-
+        /* Define the encoders */
         turnEncoder = turnMotor.getAbsoluteEncoder();
         driveEncoder = driveMotor.getEncoder();
-
+        
+        /* Sets the timeout for recieving data back from the CAN motor */
+        turnMotor.setCANTimeout(0);
+        driveMotor.setCANTimeout(0);
+        
+        /* Gets the PID controllers */
         turnController = turnMotor.getClosedLoopController();
         driveController = driveMotor.getClosedLoopController();
 
+        /* Apply constant configurations to the motors */
+        SparkMaxConfig turnConfig = SwerveModuleConstants.turnConfig;
+        SparkMaxConfig driveConfig = SwerveModuleConstants.driveConfig;
+        
         turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -77,6 +86,20 @@ public class SDSModuleIOSpark implements SDSModuleIO {
     @Override
     public void updateInputs(SDSModuleIOInputs inputs) {
         inputs.turnPosition = new Rotation2d(turnEncoder.getPosition()).minus(zeroRotation);
+        inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
+        inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * turnMotor.getBusVoltage();
+        inputs.turnCurrentAmps = turnMotor.getOutputCurrent();
+
+        inputs.drivePositionRad = driveEncoder.getPosition();
+        inputs.driveVelocityRadPerSec = driveEncoder.getVelocity();
+        inputs.driveVelocityWheelMetersPerSec = inputs.driveVelocityRadPerSec * SwerveConstants.kWheelRadiusMeters;
+        inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
+        inputs.driveCurrentAmps = driveMotor.getOutputCurrent();
+    }
+
+    @Override // TODO remove
+    public void updateInputs(SDSModuleIOInputs inputs, Rotation2d turnPositionFallback) {
+        inputs.turnPosition = turnPositionFallback;
         inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
         inputs.turnAppliedVolts = turnMotor.getAppliedOutput() * turnMotor.getBusVoltage();
         inputs.turnCurrentAmps = turnMotor.getOutputCurrent();

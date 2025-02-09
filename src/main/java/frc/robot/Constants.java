@@ -24,6 +24,11 @@ public class Constants {
         public static final int kBLTurnCANID = 3;
         public static final int kBRTurnCANID = 4;
 
+        public static final int kFLDriveCANID = 5;
+        public static final int kFRDriveCANID = 6;
+        public static final int kBLDriveCANID = 7;
+        public static final int kBRDriveCANID = 8;
+
         public static final double kDriveGearRatio = 6.12 / 1; // rotor rotations per wheel rotations
 		public static final double kInternalNEOEncoderCPR = 42 / 1; // counts on encoder counts per revolution
 		public static final double kWheelRadiusMeters = Units.inchesToMeters(4 / 2); // meters per revolution (wheel circumference)
@@ -31,6 +36,16 @@ public class Constants {
 		public static final double kDriveVelocityConversionFactor = Units.rotationsToRadians(1) / (kDriveGearRatio * kInternalNEOEncoderCPR);
 		public static final double kTurnPositionConversionFactor = Units.rotationsToRadians(1);
 		public static final double kTurnVelocityConversionFactor = Units.rotationsToRadians(1);
+
+		public static final double kMaxWheelSpeed = 8; // m/s
+		public static final double kMagVelLimit = 2.5; // m/s
+		public static final double kDirVelLimit = 10; // rad/s
+		public static final double kRotVelLimit = 2*Math.PI; // rad/s
+		public static final double kMagAccelLimit = 48; // m/s^2
+		public static final double kRotAccelLimit = 30; // rad/s^2
+
+        public static final double kDefaultTestTurn = 0;
+		public static final double kDefaultTestDrive = 0;
     }
 
     public static class SwerveModuleConstants {
