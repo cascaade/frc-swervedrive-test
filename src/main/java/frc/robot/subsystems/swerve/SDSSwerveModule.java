@@ -40,27 +40,6 @@ public class SDSSwerveModule {
         setDesiredState(state, true);
     }
 
-    /**
-     * Minimize the change in heading this swerve module state would require by potentially reversing
-     * the direction the wheel spins. If this is used with the PIDController class's continuous input
-     * functionality, the furthest a wheel will ever rotate is 90 degrees.
-     *
-     * @param state The state that should be optimized.
-     * @param currentAngle The current module angle.
-     */
-    public void optimizeModuleState(SwerveModuleState state, Rotation2d currentAngle) {
-        var delta = state.angle.minus(currentAngle);
-
-        SmartDashboard.putNumber("Modules/" + index + "-delta", delta.getDegrees());
-        SmartDashboard.putNumber("Modules/" + index + "-turn", currentAngle.getDegrees());
-        SmartDashboard.putNumber("Modules/" + index + "-to", state.angle.getDegrees());
-
-        if (Math.abs(delta.getDegrees()) > 90.0) {
-            state.speedMetersPerSecond *= -1;
-            state.angle = state.angle.rotateBy(Rotation2d.kPi);
-        }
-    }
-
     public void setDesiredState(SwerveModuleState state, boolean optimize) {
         if (!enabled()) {
             stopDrive();
